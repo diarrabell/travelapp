@@ -1,6 +1,6 @@
 # Gemini Tour Guide // Google Hackathon Project
 ## March 2026
-## by Diarra Bell <3
+## [by Diarra Bell <3](https://www.linkedin.com/in/diarrabell/)
 
 Launch the live demo here! https://geminitour-452748484124.us-central1.run.app
 
