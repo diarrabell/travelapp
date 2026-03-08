@@ -1,8 +1,8 @@
-# Gemini Tour Guide // Google Hackathon Project
+# Gemini Travel Tour Guide // Google Hackathon Project
 ## [by Diarra Bell <3](https://www.linkedin.com/in/diarrabell/)
 ## Launch the live demo here! https://geminitour-452748484124.us-central1.run.app
 
-Here is how the Gemini Tour Guide app works, explained super simply!
+Here is how the Gemini Travel Tour Guide app works, explained super simply!
 
 Imagine you have a **magical interactive map and walkie-talkie**. 
 
