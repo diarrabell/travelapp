@@ -1,0 +1,420 @@
+:root {
+    --bg-dark: #121212;
+    --bg-surface: rgba(30, 30, 30, 0.85);
+    --text-primary: #ffffff;
+    --text-secondary: #aaaaaa;
+    --accent: #4285F4; /* Google Blue */
+    --accent-gradient: linear-gradient(135deg, #4285F4, #34A853);
+    --gemini-gradient: linear-gradient(90deg, #4285F4, #EA4335, #FBBC05, #34A853);
+    --radius-lg: 24px;
+    --radius-md: 12px;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background-color: var(--bg-dark);
+    color: var(--text-primary);
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* App Wrapper for Mobile Frame Simulation */
+#app-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    max-width: 414px; /* Standard large phone width */
+    max-height: 896px; /* Standard large phone height */
+    background-color: var(--bg-dark);
+    overflow: hidden;
+}
+
+/* On larger desktop screens, add the physical phone bezel */
+@media (min-width: 450px) and (min-height: 700px) {
+    body {
+        background-color: #0c0c0c;
+        background-image: radial-gradient(circle at center, #1a1a1a 0%, #000 100%);
+    }
+    #app-wrapper {
+        height: 90vh;
+        border-radius: 40px;
+        border: 12px solid #222; /* Bezel */
+        box-shadow: 0 30px 60px rgba(0,0,0,0.8), inset 0 0 0 2px #000;
+        /* Adds a subtle shine simulating the phone edge */
+        outline: 1px solid #444;
+    }
+}
+
+/* Presentation Button (Hackathon) */
+.presentation-btn {
+    position: fixed;
+    top: 50%;
+    right: 5%;
+    transform: translateY(-50%);
+    padding: 20px 30px;
+    background: var(--gemini-gradient);
+    color: white;
+    border: none;
+    border-radius: var(--radius-lg);
+    font-size: 1.2rem;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    z-index: 1000;
+    transition: transform 0.2s;
+}
+
+.presentation-btn:hover {
+    transform: translateY(-50%) scale(1.05);
+}
+
+.presentation-btn:active {
+    transform: translateY(-50%) scale(0.95);
+}
+
+.presentation-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+    filter: grayscale(1);
+    transform: translateY(-50%) scale(1);
+}
+
+/* Hide presentation button on actual mobile devices */
+@media (max-width: 800px) {
+    .presentation-btn {
+        display: none !important;
+    }
+}
+
+/* Map */
+#map-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+/* Leaflet dark mode tweaks */
+.leaflet-layer,
+.leaflet-control-zoom-in,
+.leaflet-control-zoom-out,
+.leaflet-control-attribution {
+    filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%);
+}
+
+/* Header */
+.top-nav {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 20px;
+    z-index: 10;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.7), transparent);
+    pointer-events: none;
+}
+
+.top-nav h1 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    background: var(--gemini-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    pointer-events: auto;
+}
+
+.status-indicator {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(0, 0, 0, 0.6);
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    backdrop-filter: blur(10px);
+    pointer-events: auto;
+}
+
+.pulse-dot {
+    width: 8px;
+    height: 8px;
+    background-color: #EA4335;
+    border-radius: 50%;
+    box-shadow: 0 0 0 0 rgba(234, 67, 53, 0.7);
+    animation: pulse 1.5s infinite;
+}
+
+.status-indicator.ready .pulse-dot {
+    background-color: #34A853;
+    box-shadow: 0 0 0 0 rgba(52, 168, 83, 0.7);
+}
+
+.status-indicator.streaming .pulse-dot {
+    background-color: #4285F4;
+    box-shadow: 0 0 0 0 rgba(66, 133, 244, 0.7);
+    animation: pulserapid 0.8s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7); }
+    70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(255, 255, 255, 0); }
+    100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
+}
+
+@keyframes pulserapid {
+    0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(66, 133, 244, 0.8); }
+    70% { transform: scale(1.1); box-shadow: 0 0 0 12px rgba(66, 133, 244, 0); }
+    100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(66, 133, 244, 0); }
+}
+
+/* Bottom Sheet */
+.bottom-sheet {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 45vh;
+    background: var(--bg-surface);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-top-left-radius: var(--radius-lg);
+    border-top-right-radius: var(--radius-lg);
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 -10px 40px rgba(0,0,0,0.5);
+    border-top: 1px solid rgba(255,255,255,0.1);
+    transition: height 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.sheet-handle {
+    width: 40px;
+    height: 4px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 2px;
+    margin: 12px auto;
+}
+
+/* Chat Container */
+.chat-container {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0 20px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    scroll-behavior: smooth;
+}
+
+/* Hide scrollbar */
+.chat-container::-webkit-scrollbar {
+    width: 0px;
+}
+
+.message {
+    font-size: 0.95rem;
+    line-height: 1.5;
+    animation: fadeUp 0.4s ease-out forwards;
+}
+
+.message p {
+    margin-bottom: 8px;
+}
+
+.message p:last-child {
+    margin-bottom: 0;
+}
+
+.message.system {
+    color: var(--text-secondary);
+    text-align: center;
+    font-size: 0.85rem;
+    margin-top: auto;
+}
+
+.message.gemini {
+    color: var(--text-primary);
+}
+
+/* Streaming cursor effect */
+.message.gemini.streaming::after {
+    content: '▋';
+    display: inline-block;
+    animation: blink 1s step-end infinite;
+    margin-left: 2px;
+    color: var(--accent);
+}
+
+@keyframes blink {
+    50% { opacity: 0; }
+}
+
+@keyframes fadeUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Action Bar */
+.action-bar {
+    padding: 16px 20px 24px;
+    background: linear-gradient(to top, var(--bg-dark), transparent);
+}
+
+.primary-btn {
+    width: 100%;
+    padding: 16px;
+    border-radius: var(--radius-lg);
+    border: none;
+    background: var(--text-primary);
+    color: var(--bg-dark);
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s, opacity 0.2s;
+}
+
+.primary-btn:active {
+    transform: scale(0.98);
+}
+
+.primary-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Custom Marker */
+.custom-marker {
+    background: var(--gemini-gradient);
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    border: 3px solid white;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+    animation: dropIn 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.marker-label {
+    background: rgba(0,0,0,0.8);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: bold;
+    white-space: nowrap;
+    backdrop-filter: blur(4px);
+    border: 1px solid rgba(255,255,255,0.2);
+    margin-top: 10px;
+}
+
+@keyframes dropIn {
+    0% { transform: translateY(-50px) scale(0.5); opacity: 0; }
+    50% { transform: translateY(10px) scale(1.1); }
+    100% { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+/* Featured Places Carousel */
+.featured-carousel {
+    display: flex;
+    overflow-x: auto;
+    gap: 16px;
+    padding: 10px 0 20px 0;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+}
+
+.featured-carousel::-webkit-scrollbar {
+    display: none;
+}
+
+.featured-card {
+    flex: 0 0 calc(80% - 16px);
+    max-width: 280px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    scroll-snap-align: center;
+    cursor: pointer;
+    transition: transform 0.2s, background 0.2s;
+}
+
+.featured-card:hover, .featured-card:active {
+    transform: translateY(-4px);
+    background: rgba(255,255,255,0.1);
+}
+
+.featured-img {
+    width: 100%;
+    height: 140px;
+    object-fit: cover;
+    border-bottom: 2px solid var(--accent);
+}
+
+.featured-info {
+    padding: 12px;
+}
+
+.featured-info h3 {
+    font-size: 1rem;
+    margin-bottom: 4px;
+    color: var(--text-primary);
+}
+
+.featured-info p {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* Inline Featured Cards (in chat stream) */
+.featured-card-inline {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    margin: 12px 0;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    animation: fadeUp 0.4s ease-out forwards;
+}
+
+.featured-img-inline {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    border-bottom: 2px solid var(--accent);
+}
+
+.featured-info-inline {
+    padding: 16px;
+}
+
+.featured-info-inline h3 {
+    font-size: 1.1rem;
+    margin-bottom: 8px;
+    color: var(--text-primary);
+}
+
+.featured-info-inline p {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
